@@ -1,0 +1,39 @@
+# top-level
+syntax        = opt_space ( definition opt_space )*;
+definition    = identifier opt_space "=" opt_space expression opt_space ";";
+             
+# expressions
+expression    = choice;
+choice        = ( "|" opt_space )? sequence ( opt_space "|" opt_space sequence )*;
+sequence      = item ( req_space item )*;
+item          = zero_or_more
+              | zero_or_one
+              | one_or_more
+              | and_predicate
+              | not_predicate
+              | term;
+zero_or_more  = term opt_space "*";
+zero_or_one   = term opt_space "?";
+one_or_more   = term opt_space "+";
+and_predicate = "&" opt_space term;
+not_predicate = "!" opt_space term;
+term          = paren | atom;
+paren         = "(" opt_space expression opt_space ")";
+
+# atoms
+atom          = identifier
+              | builtin
+              | literal;
+identifier    = ( LOWER )+ ( "_" ( LOWER )+ )*;
+builtin       = ( UPPER )+;
+literal       = d_string
+              | s_string;
+d_string      = '"' ( !( '"' ) PRINT )* '"';
+s_string      = "'" ( !( "'" ) PRINT )* "'";
+
+# whitespace
+opt_space     = ( space )*;
+req_space     = ( space )+;
+space         = "#" ( PRINT )* NEWLINE
+              | BLANK
+              | NEWLINE;

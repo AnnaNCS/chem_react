@@ -1,0 +1,148 @@
+reactions_list = ( newline ) * ( reaction ( newline )+ )+;
+
+reaction = molecule_list opt_space "=" opt_space molecule_list;
+
+molecule_list = molecule_count ( opt_space "+" opt_space molecule_count )*;
+
+molecule_count = ( number opt_space )? molecule;
+
+molecule = ( group_count )+;
+
+group_count = part ( int )?;
+part = group
+     | element;
+
+group = "(" ( group_count ) + ")";
+
+number = float
+       | int;
+float = ( DIGIT ) * "." ( DIGIT ) + ;
+int = non_zero ( DIGIT ) * ;
+
+non_zero = !("0") DIGIT;
+
+opt_space = ( " " ) * ;
+
+newline = comment
+        | NEWLINE;
+        
+comment = "#" ( PRINT ) * NEWLINE;
+
+element = "Ac"
+        | "Ag"
+        | "Al"
+        | "Am"
+        | "Ar"
+        | "As"
+        | "At"
+        | "Au"
+        | "B"
+        | "Ba"
+        | "Be"
+        | "Bh"
+        | "Bi"
+        | "Bk"
+        | "Br"
+        | "C"
+        | "Ca"
+        | "Cd"
+        | "Ce"
+        | "Cf"
+        | "Cl"
+        | "Cm"
+        | "Cn"
+        | "Co"
+        | "Cr"
+        | "Cs"
+        | "Cu"
+        | "Db"
+        | "Ds"
+        | "Dy"
+        | "Er"
+        | "Es"
+        | "Eu"
+        | "F"
+        | "Fe"
+        | "Fl"
+        | "Fm"
+        | "Fr"
+        | "Ga"
+        | "Gd"
+        | "Ge"
+        | "H"
+        | "He"
+        | "Hf"
+        | "Hg"
+        | "Ho"
+        | "Hs"
+        | "I"
+        | "In"
+        | "Ir"
+        | "K"
+        | "Kr"
+        | "La"
+        | "Li"
+        | "Lr"
+        | "Lu"
+        | "Lv"
+        | "Mc"
+        | "Md"
+        | "Mg"
+        | "Mn"
+        | "Mo"
+        | "Mt"
+        | "N"
+        | "Na"
+        | "Nb"
+        | "Nd"
+        | "Ne"
+        | "Nh"
+        | "Ni"
+        | "No"
+        | "Np"
+        | "O"
+        | "Og"
+        | "Os"
+        | "P"
+        | "Pa"
+        | "Pb"
+        | "Pd"
+        | "Pm"
+        | "Po"
+        | "Pr"
+        | "Pt"
+        | "Pu"
+        | "Ra"
+        | "Rb"
+        | "Re"
+        | "Rf"
+        | "Rg"
+        | "Rh"
+        | "Rn"
+        | "Ru"
+        | "S"
+        | "Sb"
+        | "Sc"
+        | "Se"
+        | "Sg"
+        | "Si"
+        | "Sm"
+        | "Sn"
+        | "Sr"
+        | "Ta"
+        | "Tb"
+        | "Tc"
+        | "Te"
+        | "Th"
+        | "Ti"
+        | "Tl"
+        | "Tm"
+        | "Ts"
+        | "U"
+        | "V"
+        | "W"
+        | "Xe"
+        | "Y"
+        | "Yb"
+        | "Zn"
+        | "Zr";
