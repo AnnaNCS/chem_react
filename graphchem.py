@@ -9,9 +9,11 @@ from textwrap import dedent
 
 from networkx import DiGraph
 
+import sys
 from pegparse import ASTWalker, create_parser_from_file
 
 import matrices
+from pegparse.pegparse import one_line_format
 
 MoleculeCount = namedtuple('MoleculeCount', 'count molecule')
 GroupCount = namedtuple('GroupCount', 'group count')
@@ -75,6 +77,49 @@ def pathway_key(pathway):
     """
     return len(pathway), sum(len(reaction) for reaction in pathway)
 
+def reactants(string):
+    """Function to get the rectants in a reaction as a list.
+
+    Arguments:
+        string (str): The reaction equation.
+
+    Returns:
+        Array[str]: The reactants.
+    """
+    whole_str = string.split()
+    for i in whole_str:
+        if i.isnumeric() == True:
+            whole_str.remove(i)
+    for i in whole_str:
+        if i == "+":
+            whole_str.remove(i)  
+
+    index = whole_str.index("=")
+    #print(index)
+    reactants = whole_str[:index]
+    return reactants 
+
+def products(string):
+    """Function to get the products in a reaction as a list.
+
+    Arguments:
+        string (str): The reaction equation.
+
+    Returns:
+        Array[str]: The products. 
+    """
+    whole_str = string.split()
+    for i in whole_str:
+        if i.isnumeric() == True:
+            whole_str.remove(i)
+    for i in whole_str:
+        if i == "+":
+            whole_str.remove(i)  
+
+    index = whole_str.index("=")
+    #print(index)
+    products = whole_str[index+1:]
+    return products
 
 class ReactionWalker(ASTWalker):
     """A parser for chemical reactions."""
@@ -751,12 +796,16 @@ def main():
     initial_reactants = ['H2', 'CO', 'H2O']
     final_product = 'CH3OH'
     
+    sys.stdout = open("root_search.txt", "w")
+
     f = open('results.txt', 'w')
     p = open('graph_results.txt', 'w')
+    
     p.write(network.to_dot(final_product, *initial_reactants))
     
 
     pathways = network.synthesize(final_product, *initial_reactants)
+    
     pathways = sorted(pathways, key=pathway_key)
     f.write(f'{len(pathways)} synthesis pathways found:')
     f.write("\n")
@@ -768,30 +817,18 @@ def main():
         f.write(f'pathway {index}:\n')
         
         paths_num.append(index)
-        #print(index)
-
         
-        #print(pathway_key(pathway))
 
         for reaction in sorted(pathway, key=reaction_key):
             f.write(f'    {reaction}\n')
             
-            # after each reaction create a matrix 
-            # so we would call and pass arguments needed to create the matrix
-            #matrices.create_matrix(reaction, pathways, index, paths_num)
-            #print(reaction_key(reaction))
+
+        matrices.create_system(reactions, pathways, pathway, paths_num, index, final_product)  
             
         f.write("\n")
         p.close()
-        
-    """working_path = pathways[19]
-    print(working_path)
-    for reaction in working_path:
-        if final_product in reaction:
-            print("result reaction:", reaction)
-            print(type(final_product))"""
-        
-    matrices.create_system(reactions, pathways, paths_num, index, initial_reactants, final_product)    
+
+    sys.stdout.close()
     f.close()
 
 
