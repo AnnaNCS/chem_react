@@ -13,6 +13,7 @@ import sys
 from pegparse import ASTWalker, create_parser_from_file
 
 import matrices
+import numpy as np
 from pegparse.pegparse import one_line_format
 
 MoleculeCount = namedtuple('MoleculeCount', 'count molecule')
@@ -787,6 +788,119 @@ LARGE_REACTION_SET = [
 ]
 
 
+def set_up_react_dict(reactions):
+    """Create the dictionary of reactions and their corresponding concentrations and reaction rates.
+    
+    Arguments: 
+        reactions(list): the list of reactions that will be changes into a dict
+
+    Returns: 
+        dict: dictionary of reactions and its corresponding concentrations and reaction rates
+    """
+    
+    conc_rates = {}
+    for i in reactions:
+        conc_rates[i] = []
+        conc_rates[i].append(1) 
+        conc_rates[i].append(2) 
+
+    #reaction : [reaction rate, concentration]
+
+    conc_rates = {
+    'CO2 + H2 = HCOOH': [1, 2],
+    'CO + H2O = HCOOH': [2, 2],
+    'HCOOH + H2 = CH2O + H2O': [3, 2],
+    'CH2O + H2 = CH3OH': [4, 2],
+    'CH3OH + H2 = CH4 + H2O': [5, 2],
+    '2 CO2 + 2 H2 = 2 CH2O + O2': [6, 2],
+    '2 CO2 + 4 H2 = 2 CH3OH + O2': [7, 2],
+    'CO2 + 4 H2 = CH4 + 2 H2O': [8, 2],
+    '2 HCOOH + 2 H2 = 2 CH3OH + O2': [9, 2],
+    'HCOOH + H2 = CH4 + O2': [10, 2],
+    'CH2O + 2 H2 = CH4 + H2O': [11, 2],
+    '2 CO + O2 = 2 CO2': [12, 2],
+    'CO + H2 = CH2O': [13, 2],
+    'CO + 2 H2 = CH3OH': [14, 2],
+    'CO + 3 H2 = CH4 + H2O': [15, 2],
+    }
+    
+    print(conc_rates)
+
+def init_matrix(reactions):
+
+    vert_matrix = []
+    hor_matrix = []
+
+    # in order to create the main matrix of rates we need to set two matrices with dimensions 
+    # of number of reactants * 1 and 1 * number of reactants 
+    for i in reactions:
+        for x in reactants(i):
+            if x not in vert_matrix:
+                vert_matrix.append(x)
+                hor_matrix.append(x)
+
+    main_matrix = [[0 for i in range(len(vert_matrix))] for i in range(len(vert_matrix))]
+
+    # iterate trought the matrices and search for the corresponding reaction and its reaction rate 
+    # and input as a new matrix
+
+    for i in range(len(vert_matrix)):
+        #main_matrix[i] = [len(hor_matrix)]
+            for j in range(len(hor_matrix)):
+                for x in reactions:    
+                    if vert_matrix[i] in reactants(x) and hor_matrix[j] in reactants(x):
+                        print(x)
+                    else: 
+                        main_matrix[i][j] = 0
+    
+    print(vert_matrix)
+    print(hor_matrix)
+    print(main_matrix)
+    
+
+def set_up_reaction_rates(reactions):
+    
+    reaction_rates =  [0] * (len(reactions)+1)
+
+    x = 0
+    for i in reaction_rates:
+        reaction_rates[x] = (x+1)
+        x += 1 
+    
+    dict_rates = dict(zip(reactions, reaction_rates))
+
+    return dict_rates
+
+    #print('length of dictionary that asigns reaction rates to rections', len(dict_rates))
+    #print(dict_rates)
+
+def add_rates(pathways, dict_rates):
+
+    #for each pathway create an array of matrices
+    #provide a overall total rection rate of that pathway 
+
+    sum_rates = [0] * len(pathways)
+
+    x = 0
+    for i in pathways:
+        
+        sum_rate = 0
+        path = pathways[x]
+        #print(path)
+
+        for i in path:
+            if i in dict_rates:
+                rate = dict_rates.get(i, None)
+                #index = list(dict_rates).index(i)
+                #print(rate)
+            sum_rate += rate 
+            #print(sum_rates) 
+        
+        sum_rates[x] = sum_rate
+        #print(sum_rates[x])
+        x += 1
+
+
 def main():
     """Demonstrate the synthesis of methanol."""
     reactions = LARGE_REACTION_SET
@@ -795,6 +909,7 @@ def main():
 
     initial_reactants = ['H2', 'CO', 'H2O']
     final_product = 'CH3OH'
+
     
     sys.stdout = open("root_search.txt", "w")
 
@@ -811,7 +926,18 @@ def main():
     f.write("\n")
     
     paths_num = [len(pathways)+1]
-    #print(len(pathways))
+
+    ###
+
+    init_matrix(reactions)
+
+    set_up_react_dict(reactions)
+
+    #dict_rates = set_up_reaction_rates(reactions)
+
+    #add_rates(pathways, dict_rates)
+
+    ###
 
     for index, pathway in enumerate(pathways, start=1):
         f.write(f'pathway {index}:\n')

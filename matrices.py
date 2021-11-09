@@ -1,65 +1,13 @@
 import sys
 
 from graphchem import reactants, products
-
+#import graphchem
 
 # Each matrix should represent a reaction/synthesis pathway from the class Reaction
 # The goal of this code is to read the synthesis pathway and calculate the total reaction rate of the synthesis pathway 
     #assumming that we already know the concentration of the reactions and reaction rates
 # Each time the graphchem is building a pathway it builds also a matrix for that pathway 
 
-
-def set_up_concentrations(paths_num):
-    
-    concentrations = [0] * len(paths_num)
-    for i in concentrations:
-        concentrations[i] = 1
-        #print(concentrations.index(i))
-
-    #print('length of concentrations array' , len(concentrations))
-    #print('length of paths_num that includes pathways keys' ,len(paths_num))
-
-def set_up_reaction_rates(reactions):
-    
-    reaction_rates =  [0] * (len(reactions)+1)
-
-    x = 0
-    for i in reaction_rates:
-        reaction_rates[x] = (x+1)
-        x += 1 
-    
-    dict_rates = dict(zip(reactions, reaction_rates))
-
-    return dict_rates
-
-    #print('length of dictionary that asigns reaction rates to rections', len(dict_rates))
-    #print(dict_rates)
-
-def add_rates(pathways, dict_rates):
-
-    #for each pathway create an array of matrices
-    #provide a overall total rection rate of that pathway 
-
-    sum_rates = [0] * len(pathways)
-
-    x = 0
-    for i in pathways:
-        
-        sum_rate = 0
-        path = pathways[x]
-        #print(path)
-
-        for i in path:
-            if i in dict_rates:
-                rate = dict_rates.get(i, None)
-                #index = list(dict_rates).index(i)
-                #print(rate)
-            sum_rate += rate 
-            #print(sum_rates) 
-        
-        sum_rates[x] = sum_rate
-        #print(sum_rates[x])
-        x += 1
 
 def find_root_react(pathway, final_react, to_be_searched):
 
@@ -72,8 +20,11 @@ def find_root_react(pathway, final_react, to_be_searched):
                 if reaction not in to_be_searched.values():
                     # how to append to a kye multiple values 
                     if x in to_be_searched.keys():
-                        to_be_searched[x].append(reaction)
+                        # check for the repetition of values within the same key 
+                        if reaction not in to_be_searched[x]:   
+                            to_be_searched[x].append(reaction)
                     if x not in to_be_searched.keys():
+                        # check for key, whether present or not added yet
                         to_be_searched[x] = []
                         to_be_searched[x].append(reaction)
                 print("Root Reaction added ---> key:", x, ", values:", to_be_searched[x])
@@ -124,6 +75,7 @@ def search_roots(working_path, final_product):
 
     breaking = False
     len_loop = len(working_path) * 2
+
     for x in range(0, len_loop, 1):
         if len(to_be_searched[list(to_be_searched)[-1]]) == 1:
             if (next_key_present(working_path, to_be_searched[list(to_be_searched)[-1]][0], to_be_searched) == True):
@@ -154,12 +106,6 @@ def search_roots(working_path, final_product):
 
 
 def create_system(reactions, pathways, pathway, paths_num, index, final_product):
-     
-    set_up_concentrations(paths_num)
-
-    dict_rates = set_up_reaction_rates(reactions)
-
-    add_rates(pathways, dict_rates)
 
     print("\n")
     print("----- Index of pathway to be serached:", index, "-----")
