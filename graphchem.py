@@ -6,13 +6,14 @@ from decimal import Decimal
 from itertools import product as cross_product
 from os.path import realpath, join as join_path, dirname
 from textwrap import dedent
+from tkinter.constants import W
 
 from networkx import DiGraph
 
 import sys
 from pegparse import ASTWalker, create_parser_from_file
 
-import matrices
+import matrices, re
 import numpy as np
 from pegparse.pegparse import one_line_format
 
@@ -77,6 +78,23 @@ def pathway_key(pathway):
         Tuple[int, int]: The key.
     """
     return len(pathway), sum(len(reaction) for reaction in pathway)
+
+def reactants_full(string):
+    """Function to get the rectants in full (with the numbers) in a reaction as a list.
+
+    Arguments:
+        string (str): The reaction equation.
+
+    Returns:
+        Array[str]: The reactants.
+    """
+    whole_str = string.split("=")
+    whole_str = whole_str[0].split("+")
+    
+    for i in range(len(whole_str)):
+        whole_str[i] = whole_str[i].strip()
+      
+    return whole_str
 
 def reactants(string):
     """Function to get the rectants in a reaction as a list.
@@ -787,94 +805,88 @@ LARGE_REACTION_SET = [
     'CO + 3 H2 = CH4 + H2O',
 ]
 
+CONC = [ 
+    [1], # CO2 
+    [2], # H2
+    [3], # CO
+    [4], # H2O
+    [5], # HCOOH
+    [6], # CH20
+    [7], # CH3OH
+    [8]  # O2
+]
 
-def set_up_react_dict(reactions):
-    """Create the dictionary of reactions and their corresponding concentrations and reaction rates.
+RATES = [
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8]
+]
+
+def get_compound(reactions):
+    """Create the list of compounds present in the system.
     
     Arguments: 
-        reactions(list): the list of reactions that will be changes into a dict
+        reactions(list): the list of reactions that will be used for the program run
 
     Returns: 
-        dict: dictionary of reactions and its corresponding concentrations and reaction rates
+        lsit: list of compounds
     """
     
-    conc_rates = {}
-    for i in reactions:
-        conc_rates[i] = []
-        conc_rates[i].append(1) 
-        conc_rates[i].append(2) 
+    comp_matrix = []
 
-    #reaction : [reaction rate, concentration]
-
-    conc_rates = {
-    'CO2 + H2 = HCOOH': [1, 2],
-    'CO + H2O = HCOOH': [2, 2],
-    'HCOOH + H2 = CH2O + H2O': [3, 2],
-    'CH2O + H2 = CH3OH': [4, 2],
-    'CH3OH + H2 = CH4 + H2O': [5, 2],
-    '2 CO2 + 2 H2 = 2 CH2O + O2': [6, 2],
-    '2 CO2 + 4 H2 = 2 CH3OH + O2': [7, 2],
-    'CO2 + 4 H2 = CH4 + 2 H2O': [8, 2],
-    '2 HCOOH + 2 H2 = 2 CH3OH + O2': [9, 2],
-    'HCOOH + H2 = CH4 + O2': [10, 2],
-    'CH2O + 2 H2 = CH4 + H2O': [11, 2],
-    '2 CO + O2 = 2 CO2': [12, 2],
-    'CO + H2 = CH2O': [13, 2],
-    'CO + 2 H2 = CH3OH': [14, 2],
-    'CO + 3 H2 = CH4 + H2O': [15, 2],
-    }
-    
-    print(conc_rates)
-
-def init_matrix(reactions):
-
-    vert_matrix = []
-    hor_matrix = []
-
-    # in order to create the main matrix of rates we need to set two matrices with dimensions 
-    # of number of reactants * 1 and 1 * number of reactants 
+    j = 0
     for i in reactions:
         for x in reactants(i):
-            if x not in vert_matrix:
-                vert_matrix.append(x)
-                hor_matrix.append(x)
+            if x not in comp_matrix:
+                comp_matrix.append(x)
+                j += 1 
 
-    main_matrix = [[0 for i in range(len(vert_matrix))] for i in range(len(vert_matrix))]
+    return comp_matrix
 
-    # iterate trought the matrices and search for the corresponding reaction and its reaction rate 
-    # and input as a new matrix
+def resid_matrix(reactions):
 
-    for i in range(len(vert_matrix)):
-        #main_matrix[i] = [len(hor_matrix)]
-            for j in range(len(hor_matrix)):
-                for x in reactions:    
-                    if vert_matrix[i] in reactants(x) and hor_matrix[j] in reactants(x):
-                        print(x)
-                    else: 
-                        main_matrix[i][j] = 0
-    
-    print(vert_matrix)
-    print(hor_matrix)
-    print(main_matrix)
-    
+    """comp_matrix_ver = get_compound(reactions)
+    comp_matrix_hor = get_compound(reactions)
 
-def set_up_reaction_rates(reactions):
-    
-    reaction_rates =  [0] * (len(reactions)+1)
+    conc = []
+    rates = []
+    for i in CONC_AND_RATES:
+        conc.append(CONC_AND_RATES.get(i)[0])
+        rates.append(CONC_AND_RATES.get(i)[1])
 
-    x = 0
-    for i in reaction_rates:
-        reaction_rates[x] = (x+1)
-        x += 1 
-    
-    dict_rates = dict(zip(reactions, reaction_rates))
+    print(conc)
+    print(rates)
 
-    return dict_rates
+    main_matrix = [[0 for i in range(len(CONC_AND_RATES))] for i in range(len(CONC_AND_RATES))]
 
-    #print('length of dictionary that asigns reaction rates to rections', len(dict_rates))
-    #print(dict_rates)
+    for i in range(len(comp_matrix_ver)):
+        for j in range(len(comp_matrix_hor)):
+            for x in reactions:    
+                if (comp_matrix_ver[i] in reactants(x)) and (comp_matrix_hor[j] in reactants(x)):
+                    main_matrix[i][j] = 2
+                    break
+                else: 
+                    main_matrix[i][j] = 0
 
-def add_rates(pathways, dict_rates):
+    for i in range(len(main_matrix)):
+        print(main_matrix[i])"""
+
+    order = get_compound(reactions)
+    print(order)
+
+    main_matrix = np.matrix(RATES)
+    concentrations = np.matrix(CONC)
+    result =  main_matrix * concentrations
+    #print(main_matrix, "*\n", concentrations, "=\n", result)
+    print(result)
+
+
+def rates_results(pathways, dict_rates):
 
     #for each pathway create an array of matrices
     #provide a overall total rection rate of that pathway 
@@ -929,13 +941,7 @@ def main():
 
     ###
 
-    init_matrix(reactions)
-
-    set_up_react_dict(reactions)
-
-    #dict_rates = set_up_reaction_rates(reactions)
-
-    #add_rates(pathways, dict_rates)
+    main_matrix = resid_matrix(reactions)
 
     ###
 
