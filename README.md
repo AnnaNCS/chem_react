@@ -8,7 +8,7 @@ GraphChem finds all possible synthesis pathways for a product given a set of rea
 
 GraphChem requires [Python 3] and the [networkx] package. Once networkx is installed, the following will run the demo below:
 
-    git clone git@github.com:justinnhli/graphchem.git
+    git clone git@github.com:annancs/chem_react.git
     cd graphchem
     python3 graphchem.py
 
