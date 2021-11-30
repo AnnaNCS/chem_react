@@ -13,7 +13,7 @@ from networkx import DiGraph
 import sys
 from pegparse import ASTWalker, create_parser_from_file
 
-import matrices, re
+import search, re
 import numpy as np
 from pegparse.pegparse import one_line_format
 
@@ -925,7 +925,7 @@ def main():
     
     sys.stdout = open("root_search.txt", "w")
 
-    f = open('results.txt', 'w')
+    f = open('paths_results.txt', 'w')
     p = open('graph_results.txt', 'w')
     
     p.write(network.to_dot(final_product, *initial_reactants))
@@ -955,7 +955,7 @@ def main():
             f.write(f'    {reaction}\n')
             
 
-        matrices.create_system(reactions, pathways, pathway, paths_num, index, final_product)  
+        search.create_system(reactions, pathways, pathway, paths_num, index, final_product)  
             
         f.write("\n")
         p.close()

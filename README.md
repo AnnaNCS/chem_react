@@ -1,3 +1,5 @@
+#FIXME and add the requirments in here 
+
 # GraphChem
 
 GraphChem finds all possible synthesis pathways for a product given a set of reactions and a set of initial reactants.
