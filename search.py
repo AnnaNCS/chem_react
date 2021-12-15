@@ -1,17 +1,27 @@
 import sys
 
 from graphchem import reactants, products
-#import graphchem
+
 
 # Each matrix should represent a reaction/synthesis pathway from the class Reaction
 # The goal of this code is to read the synthesis pathway and calculate the total reaction rate of the synthesis pathway 
     #assumming that we already know the concentration of the reactions and reaction rates
-# Each time the graphchem is building a pathway it builds also a matrix for that pathway 
+# Each time the graphchem is building a pathway it builds also a matrix for that whole system 
 
 
 def find_root_react(pathway, final_react, to_be_searched):
+    """Creates a the disctionanry with key and value, that can be a tuple if multiple reactions are producing the same compound.
+    
+    Arguments: 
+        pathway(FrozenSet[Set[str]]): one single pathway
+        final_react(): the final target compound of the network 
+        to_be_searched(list): recursive tuple list that grows as more values are added to it.
 
-    #find reaction with products as the final_reactions reactants
+    Returns: 
+        list: the tuple list, returned into the loop to be checked again until all_key_present = True
+    """
+
+    #find reactions with products as the final_reactions reactants
 
     for reaction in pathway:
         prod = products(reaction)
@@ -33,12 +43,32 @@ def find_root_react(pathway, final_react, to_be_searched):
     
 
 def find_final_reaction(working_path, final_product):
+    """Create .
+    
+    Arguments: 
+        working_path(FrozenSet[Set[str]]): one single pathway
+        final_product(): the final target compound of the network
+
+    Returns: 
+        reaction(str): the reaction that produces the final_product
+    """
 
     for reaction in working_path:
         if final_product in products(reaction):
             return reaction
 
 def next_key_present(pathway, react, to_be_searched):
+    """Check  .
+    
+    Arguments: 
+        pathway(FrozenSet[Set[str]]): one single pathway
+        react(str): the compound to be checked  
+        to_be_searched(list): the tuple list with reactions as values 
+
+    Returns: 
+        bool: True or False, whether the next key is already present in the tuple or not.
+    """
+
     for reaction in pathway:
         prod = products(reaction)
         for x in prod:
@@ -50,10 +80,21 @@ def next_key_present(pathway, react, to_be_searched):
                     return False
 
 def all_key_present():
+    """Checks that all keys have been visited and added into the tuple"""
     return True
                         
        
 def search_roots(working_path, final_product):
+    """Prints the dictionary in the root_serach.txt file, where the key is each unique product in the given pathway, 
+       and the values are all the reactions that produce the product.
+    
+    Arguments: 
+        working_path(FrozenSet[Set[str]]): specific single pathway to be searched
+        final_react(): 
+
+    Returns: 
+        None
+    """
 
     print('The working pathway is:', working_path)
 
@@ -106,13 +147,15 @@ def search_roots(working_path, final_product):
 
 
 def create_system(reactions, pathways, pathway, paths_num, index, final_product):
+    """Calls the search_root function."""
 
     print("\n")
-    print("----- Index of pathway to be serached:", index, "-----")
+    print("----- Index of pathway to be searched:", index, "-----")
     
     search_roots(pathway, final_product)
 
     # compare the possible reactions rates
+    # TODO 
 
 
 

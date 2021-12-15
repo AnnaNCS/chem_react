@@ -1,57 +1,29 @@
-#FIXME and add the requirments in here 
+ # GraphChem
 
-# GraphChem
+GraphChem, a software, written in python, generates all possible pathways to synthesize the final product from a given set of reactions and reactants. The output includes the calculation of the corresponding reaction rates within the network. The goal is to provide an efficient and optimized system to carry out chemical processes within one software.
 
-GraphChem finds all possible synthesis pathways for a product given a set of reactions and a set of initial reactants.
+## Required input
+
+Before running the software, ensure you have included and updates the input data:
+    in the graphchem.py file, include: 
+        the set of reactions in the system; SMALL_REACTION_SET = []
+        the concentrations of each compound in the system; CONC = []
+        the reaction rates; RATES = [] 
+        in main(), the initial reactants and final product 
+
 
 ## Running
 
-GraphChem requires [Python 3] and the [networkx] package. Once networkx is installed, the following will run the demo below:
+GraphChem requires [Python 3] and the [networkx] package. Once networkx is installed, the following will run the software with the input provided:
 
     git clone git@github.com:annancs/chem_react.git
     cd graphchem
     python3 graphchem.py
 
-## Example
-
-Using the following reactions:
-
-    CO2 + H2 = HCOOH
-    CO + H2O = HCOOH
-    HCOOH + H2 = CH2O + H2O
-    CH2O + H2 = CH3OH
-    CH3OH + H2 = CH4 + H2O
-    CO + 2 H2 = CH3OH
-
-If we start with initial (umlimited) amounts of carbon monoxide (CO), hydrogen gas (H2), and water (H20), and try to synthesize methanol (CH3OH), GraphChem will find a total of four synthesis pathways:
-
-    4 synthesis pathways found:
-
-    pathway 1:
-        CO + 2 H2 = CH3OH
-
-    pathway 2:
-        CO + H2O = HCOOH
-        CH2O + H2 = CH3OH
-        HCOOH + H2 = CH2O + H2O
-
-    pathway 3:
-        CO + H2O = HCOOH
-        CH2O + H2 = CH3OH
-        CH3OH + H2 = CH4 + H2O
-        HCOOH + H2 = CH2O + H2O
-
-    pathway 4:
-        CO + H2O = HCOOH
-        CH2O + H2 = CH3OH
-        CO + 2 H2 = CH3OH
-        CH3OH + H2 = CH4 + H2O
-        HCOOH + H2 = CH2O + H2O
 
 Additionally, GraphChem can generate a [GraphViz] reaction network visualization:
 
-![Example synthesis of methanol](images/example.png)
+    Copy line 1 to 36 from the graph_results.txt file and any pathway from the file that needs to be represented as a graph. Insert the code into the online generator, https://dreampuf.github.io/GraphvizOnline/. 
 
-[GraphViz]: https://www.graphviz.org/
-[networkx]: https://networkx.github.io/
-[Python 3]: https://www.python.org/
+    [networkx]: https://networkx.github.io/
+    [Python 3]: https://www.python.org/

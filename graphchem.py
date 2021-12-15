@@ -602,7 +602,7 @@ class ReactionNetwork:
         return pathways
 
     def _simplify_pathways(self, pathways):
-        """Remove redundant pathways. TODO
+        """Remove redundant pathways. 
 
         The problem is that with a sufficiently completed network, there will
         be a combinatorial explosion in the number of synthesis pathways. For
@@ -828,13 +828,13 @@ RATES = [
 ]
 
 def get_compound(reactions):
-    """Create the list of compounds present in the system.
+    """Generates the matrix with the unique compunds present in the system.
     
     Arguments: 
-        reactions(list): the list of reactions that will be used for the program run
+        reactions(list): the list of reactions that will be used for the program to analyze
 
     Returns: 
-        lsit: list of compounds
+        list: matrix of unique compounds
     """
     
     comp_matrix = []
@@ -849,8 +849,16 @@ def get_compound(reactions):
     return comp_matrix
 
 def resid_matrix(reactions):
+    """Calculates the residual concentration of compounds in the system.
+    
+    Arguments: 
+        reactions(list): the list of reactions that will be serched
 
-    """comp_matrix_ver = get_compound(reactions)
+    Returns: 
+        matrix: matrix with the calculated concentrations
+    
+    '''
+    comp_matrix_ver = get_compound(reactions)
     comp_matrix_hor = get_compound(reactions)
 
     conc = []
@@ -877,16 +885,30 @@ def resid_matrix(reactions):
         print(main_matrix[i])"""
 
     order = get_compound(reactions)
-    print(order)
+    #print(order)
 
     main_matrix = np.matrix(RATES)
     concentrations = np.matrix(CONC)
     result =  main_matrix * concentrations
     #print(main_matrix, "*\n", concentrations, "=\n", result)
+
+    print("-----The following is the matrix with the final residual concentrations of compounds in the network:-----\n")
     print(result)
 
 
+
 def rates_results(pathways, dict_rates):
+    """Calcualtes the reaction rates whithin each pathway 
+    
+    Arguments: 
+        pathway(FrozenSet[list [str]]): the list of reactions within a synthesized pathway
+        dict_rates(dict): corresponding reactions rates
+
+    Returns: 
+        None
+        is not used in the software
+
+    """
 
     #for each pathway create an array of matrices
     #provide a overall total rection rate of that pathway 
