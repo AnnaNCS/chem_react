@@ -1,4 +1,6 @@
- # GraphChem
+Senior Thesis Research Project in Python, Fall and Spring 2021-2022: Chem React
+
+# GraphChem
 
 GraphChem, a software, written in python, generates all possible pathways to synthesize the final product from a given set of reactions and reactants. The output includes the calculation of the corresponding reaction rates within the network. The goal is to provide an efficient and optimized system to carry out chemical processes within one software.
 
